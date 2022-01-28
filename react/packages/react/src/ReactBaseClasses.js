@@ -17,6 +17,7 @@ if (__DEV__) {
 
 /**
  * Base class helpers for the updating state of a component.
+ * 用于更新组件状态的基类助手。
  */
 function Component(props, context, updater) {
   this.props = props;
@@ -25,6 +26,7 @@ function Component(props, context, updater) {
   this.refs = emptyObject;
   // We initialize the default updater but the real one gets injected by the
   // renderer.
+  // 我们初始化了默认的更新器但真正的更新器会被渲染器注入。
   this.updater = updater || ReactNoopUpdateQueue;
 }
 

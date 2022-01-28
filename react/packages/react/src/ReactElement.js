@@ -111,9 +111,11 @@ function defineRefPropWarningGetter(props, displayName) {
 const ReactElement = function(type, key, ref, self, source, owner, props) {
   const element = {
     // This tag allows us to uniquely identify this as a React Element
+    // 这个标签允许我们唯一地将其标识为React Element
     $$typeof: REACT_ELEMENT_TYPE,
 
     // Built-in properties that belong on the element
+    // 用来记录组件的类型，是原生组件？还是class组件还是function组件，还是其他的React提供的组件
     type: type,
     key: key,
     ref: ref,
@@ -140,6 +142,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
       writable: true,
       value: false,
     });
+
     // self and source are DEV only properties.
     Object.defineProperty(element, '_self', {
       configurable: false,
@@ -147,6 +150,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
       writable: false,
       value: self,
     });
+
     // Two elements created in two different places should be considered
     // equal for testing purposes and therefore we hide it from enumeration.
     Object.defineProperty(element, '_source', {
@@ -155,6 +159,7 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
       writable: false,
       value: source,
     });
+
     if (Object.freeze) {
       Object.freeze(element.props);
       Object.freeze(element);
@@ -167,6 +172,14 @@ const ReactElement = function(type, key, ref, self, source, owner, props) {
 /**
  * Create and return a new ReactElement of the given type.
  * See https://reactjs.org/docs/react-api.html#createelement
+ *
+ * 这里是type指的是节点类型，如果是原生的节点，那它就是一个字符串，如果是一个我们自己声明的组件
+ * 那就是一个Class Component或者Function Component。我们还可以使用React提供的原生组件，比如
+ * Fragment，Suspense，StrictMode。
+ *
+ * config：指的是我们写在组件上的attrs，它们都会变成key-value的形式被存到config里面
+ *
+ * children：子组件
  */
 export function createElement(type, config, children) {
   let propName;
@@ -180,9 +193,11 @@ export function createElement(type, config, children) {
   let source = null;
 
   if (config != null) {
+    // 读到合理的ref，就将其放到ref里面
     if (hasValidRef(config)) {
       ref = config.ref;
     }
+    // 读到合理的key，就将其放到key里面
     if (hasValidKey(config)) {
       key = '' + config.key;
     }
@@ -191,6 +206,7 @@ export function createElement(type, config, children) {
     source = config.__source === undefined ? null : config.__source;
     // Remaining properties are added to a new props object
     for (propName in config) {
+      // 判断一下是否是内建的props，如果不是，就放到一个新建的props里面
       if (
         hasOwnProperty.call(config, propName) &&
         !RESERVED_PROPS.hasOwnProperty(propName)
@@ -202,6 +218,8 @@ export function createElement(type, config, children) {
 
   // Children can be more than one argument, and those are transferred onto
   // the newly allocated props object.
+
+  // children可能会不止一个，它们都会被转移到一个新分配的props对象里面
   const childrenLength = arguments.length - 2;
   if (childrenLength === 1) {
     props.children = children;
@@ -218,15 +236,22 @@ export function createElement(type, config, children) {
     props.children = childArray;
   }
 
-  // Resolve default props
+  // Resolve default props  解析默认的props
+  /**
+   * 如果我们通过 Class Comp extends React.Component{} 这种方式声明一个组件的话，我们就可以通过
+   * Comp.defaultProps = {value: 1}，这种方式给组件的props初始化。当我们这个组件被别人使用的时候
+   * 他没有传递这个value的值，那这个value的值就默认是1；
+   */
   if (type && type.defaultProps) {
     const defaultProps = type.defaultProps;
     for (propName in defaultProps) {
+      // 如果使用的时候，没有传值就使用默认值
       if (props[propName] === undefined) {
         props[propName] = defaultProps[propName];
       }
     }
   }
+
   if (__DEV__) {
     if (key || ref) {
       const displayName =
@@ -241,6 +266,7 @@ export function createElement(type, config, children) {
       }
     }
   }
+
   return ReactElement(
     type,
     key,
