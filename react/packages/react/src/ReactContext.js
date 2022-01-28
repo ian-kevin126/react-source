@@ -40,6 +40,12 @@ export function createContext<T>(
     // there to be two concurrent renderers at most: React Native (primary) and
     // Fabric (secondary); React DOM (primary) and React ART (secondary).
     // Secondary renderers store their context values on separate fields.
+
+    // 作为支持多个并发渲染器的解决方法，我们将其分类
+    // 一些渲染器作为主要渲染器，其他渲染器作为次要渲染器。 我们只期待
+    // 最多有两个并发渲染器：React Native (primary) 和
+    // Fabric（二级）； React DOM（主要）和 React ART（次要）。
+    // 辅助渲染器将它们的上下文值存储在单独的字段中。
     _currentValue: defaultValue,
     _currentValue2: defaultValue,
     // These are circular
@@ -59,6 +65,10 @@ export function createContext<T>(
     // A separate object, but proxies back to the original context object for
     // backwards compatibility. It has a different $$typeof, so we can properly
     // warn for the incorrect usage of Context as a Consumer.
+
+    // 一个单独的对象，但代理回原始上下文对象
+    // 向后兼容。 它有不同的 $$typeof，所以我们可以适当地
+    // 警告上下文作为消费者的错误使用。
     const Consumer = {
       $$typeof: REACT_CONTEXT_TYPE,
       _context: context,
@@ -113,6 +123,7 @@ export function createContext<T>(
       },
     });
     // $FlowFixMe: Flow complains about missing properties because it doesn't understand defineProperty
+    // Flow 抱怨缺少属性，因为它不理解 defineProperty
     context.Consumer = Consumer;
   } else {
     context.Consumer = context;
