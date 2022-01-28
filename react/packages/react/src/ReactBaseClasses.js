@@ -87,6 +87,8 @@ Component.prototype.forceUpdate = function(callback) {
 };
 
 /**
+ * 即将被废弃的 API：这些APIs过去存在于经典的React class里面，但是我们现在将要废弃它们
+ * 不会再现代基类中使用。
  * Deprecated APIs. These APIs used to exist on classic React classes but since
  * we would like to deprecate them, we're not going to move them over to this
  * modern base class. Instead, we define a getter that warns if it's accessed.
@@ -142,6 +144,11 @@ const pureComponentPrototype = (PureComponent.prototype = new ComponentDummy());
 pureComponentPrototype.constructor = PureComponent;
 // Avoid an extra prototype jump for these methods.
 Object.assign(pureComponentPrototype, Component.prototype);
+
+/**
+ * PureComponent继承自Component，只是在组件上加了一个isPureComponent为true的属性，
+ * 而后在组件更新的时候，通过这个属性以及从父组件传进来的props的变化与否来判断当前组件要不要更新。
+ */
 pureComponentPrototype.isPureReactComponent = true;
 
 export {Component, PureComponent};

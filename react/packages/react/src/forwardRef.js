@@ -39,6 +39,31 @@ export default function forwardRef<Props, ElementType: React$ElementType>(
     }
   }
 
+  /**
+   * 这里要注意，通过forwardRef包裹的组件，返回的并不是这个 REACT_FORWARD_REF_TYPE 类型的对象，仍然是ReactElement.js中的 REACT_ELEMENT_TYPE
+ const element = {
+    $$typeof: REACT_ELEMENT_TYPE,
+
+    // Built-in properties that belong on the element
+    type: type,
+    key: key,
+    ref: ref,
+    props: props,
+
+    // Record the component responsible for creating this element.
+    _owner: owner,
+  };
+
+  只是在type上会加入下面这个属性
+  {
+    $$typeof: REACT_FORWARD_REF_TYPE,
+    render,
+  }
+
+  可以这么说，只要是通过createElement()方法创建的组件，它的$$typeof都是REACT_ELEMENT_TYPE
+
+   *
+   */
   return {
     $$typeof: REACT_FORWARD_REF_TYPE,
     render,
