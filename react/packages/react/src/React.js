@@ -35,6 +35,10 @@ import {
 import ReactSharedInternals from './ReactSharedInternals';
 import {enableStableConcurrentModeAPIs} from 'shared/ReactFeatureFlags';
 
+/**
+ * React的入口文件，这里声明了一个React对象，然后导出这个对象，当我们在使用React的时候，就可以
+ * 通过React对象拿到这里面的API。
+ */
 const React = {
   Children: {
     map,
